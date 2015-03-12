@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/hpsModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/hpsModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../mo
 import utilFunctions as UF
 import hpsModel as HPS
 
-def main(inputFile='../../sounds/sax-phrase-short.wav', window='blackman', M=601, N=1024, t=-100, 
+def extractHarmSpec(inputFile='../../sounds/sax-phrase-short.wav', window='blackman', M=601, N=1024, t=-100, 
 	minSineDur=0.1, nH=100, minf0=350, maxf0=700, f0et=5, harmDevSlope=0.01, stocf=0.1):
 	"""
 	inputFile: input sound file (monophonic with sampling rate of 44100)
@@ -96,4 +96,4 @@ def main(inputFile='../../sounds/sax-phrase-short.wav', window='blackman', M=601
 	plt.show()
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

@@ -208,7 +208,7 @@ class HpsModel_frame:
 			harmDevSlope = float(self.harmDevSlope.get())
 			stocf = float(self.stocf.get())
 
-			hpsModel_function.main(inputFile, window, M, N, t, minSineDur, nH, minf0, maxf0, f0et, harmDevSlope, stocf)
+			hpsModel_function.extractHarmSpec(inputFile, window, M, N, t, minSineDur, nH, minf0, maxf0, f0et, harmDevSlope, stocf)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

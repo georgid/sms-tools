@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/spsModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/spsModel.py
 
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/'))
@@ -8,7 +8,7 @@ from scipy.signal import get_window
 import spsModel as SPS
 import utilFunctions as UF
 
-def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, minSineDur=0.02, 
+def extractHarmSpec(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, minSineDur=0.02, 
 	maxnSines=150, freqDevOffset=10, freqDevSlope=0.001, stocf=0.2):
 	"""
 	inputFile: input sound file (monophonic with sampling rate of 44100)
@@ -95,4 +95,4 @@ def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, 
 	plt.show()
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

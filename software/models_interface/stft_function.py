@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/stft.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/stft.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../mo
 import utilFunctions as UF
 import stft as STFT
 
-def main(inputFile = '../../sounds/piano.wav', window = 'hamming', M = 1024, N = 1024, H = 512):
+def extractHarmSpec(inputFile = '../../sounds/piano.wav', window = 'hamming', M = 1024, N = 1024, H = 512):
 	"""
 	analysis/synthesis using the STFT
 	inputFile: input sound file (monophonic with sampling rate of 44100)
@@ -85,4 +85,4 @@ def main(inputFile = '../../sounds/piano.wav', window = 'hamming', M = 1024, N =
 	
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

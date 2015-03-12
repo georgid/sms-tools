@@ -185,7 +185,7 @@ class SpsModel_frame:
 			freqDevSlope = float(self.freqDevSlope.get())
 			stocf = float(self.stocf.get())
 			
-			spsModel_function.main(inputFile, window, M, N, t, minSineDur, maxnSines, freqDevOffset, freqDevSlope, stocf)
+			spsModel_function.extractHarmSpec(inputFile, window, M, N, t, minSineDur, maxnSines, freqDevOffset, freqDevSlope, stocf)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

@@ -104,7 +104,7 @@ class StochasticTransformations_frame:
 			stocf = float(self.stocf.get())
 			timeScaling = np.array(eval(self.timeScaling.get()))
 
-			sT.main(inputFile, stocf, timeScaling)
+			sT.extractHarmSpec(inputFile, stocf, timeScaling)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

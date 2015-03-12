@@ -119,7 +119,7 @@ class DftModel_frame:
 			N = int(self.N.get())
 			time = float(self.time.get())
 			
-			dftModel_function.main(inputFile, window, M, N, time)
+			dftModel_function.extractHarmSpec(inputFile, window, M, N, time)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error",errorMessage)

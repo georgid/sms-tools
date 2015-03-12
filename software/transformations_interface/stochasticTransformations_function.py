@@ -10,7 +10,7 @@ import stochasticModel as STC
 import utilFunctions as UF
 import stochasticTransformations as STCT
 
-def main (inputFile='../../sounds/rain.wav', stocf=0.1, timeScaling = np.array([0, 0, 1, 2])):
+def extractHarmSpec (inputFile='../../sounds/rain.wav', stocf=0.1, timeScaling = np.array([0, 0, 1, 2])):
 	"""
 	function to perform a time scaling using the stochastic model
 	inputFile: name of input sound file
@@ -81,4 +81,4 @@ def main (inputFile='../../sounds/rain.wav', stocf=0.1, timeScaling = np.array([
 	plt.show()
 
 if __name__ == '__main__':
-	main()
+	extractHarmSpec()

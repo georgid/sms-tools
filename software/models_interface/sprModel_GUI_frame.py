@@ -177,7 +177,7 @@ class SprModel_frame:
 			freqDevOffset = int(self.freqDevOffset.get())
 			freqDevSlope = float(self.freqDevSlope.get())
 			
-			sprModel_function.main(inputFile, window, M, N, t, minSineDur, maxnSines, freqDevOffset, freqDevSlope)
+			sprModel_function.extractHarmSpec(inputFile, window, M, N, t, minSineDur, maxnSines, freqDevOffset, freqDevSlope)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

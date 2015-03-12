@@ -124,7 +124,7 @@ class Stft_frame:
 			N = int(self.N.get())
 			H = int(self.H.get())
 		
-			stft_function.main(inputFile, window, M, N, H)
+			stft_function.extractHarmSpec(inputFile, window, M, N, H)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

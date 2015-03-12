@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/stochasticModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/stochasticModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../mo
 import utilFunctions as UF
 import stochasticModel as STM
 
-def main(inputFile='../../sounds/ocean.wav', H=256, N=512, stocf=.1):
+def extractHarmSpec(inputFile='../../sounds/ocean.wav', H=256, N=512, stocf=.1):
 	"""
 	inputFile: input sound file (monophonic with sampling rate of 44100)
 	H: hop size, N: fft size
@@ -62,4 +62,4 @@ def main(inputFile='../../sounds/ocean.wav', H=256, N=512, stocf=.1):
 	plt.show()
   
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

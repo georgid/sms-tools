@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/dftModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/dftModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../mo
 import utilFunctions as UF
 import dftModel as DFT
 
-def main(inputFile = '../../sounds/piano.wav', window = 'blackman', M = 511, N = 1024, time = .2):
+def extractHarmSpec(inputFile = '../../sounds/piano.wav', window = 'blackman', M = 511, N = 1024, time = .2):
 	"""
 	inputFile: input sound file (monophonic with sampling rate of 44100)
 	window: analysis window type (choice of rectangular, hanning, hamming, blackman, blackmanharris)	
@@ -74,4 +74,4 @@ def main(inputFile = '../../sounds/piano.wav', window = 'blackman', M = 511, N =
 	plt.show()
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

@@ -116,7 +116,7 @@ class StochasticModel_frame:
 			N = int(self.N.get())
 			stocf = float(self.stocf.get())
 				
-			stochasticModel_function.main(inputFile, H, N, stocf)
+			stochasticModel_function.extractHarmSpec(inputFile, H, N, stocf)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

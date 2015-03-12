@@ -8,6 +8,11 @@ import math
 import dftModel as DFT
 import utilFunctions as UF
 import sineModel as SM
+import sys
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 def f0Detection(x, fs, w, N, H, t, minf0, maxf0, f0et):
 	"""
@@ -69,6 +74,12 @@ def harmonicDetection(pfreq, pmag, pphase, f0, nH, hfreqp, fs, harmDevSlope=0.01
 
 	if (f0<=0):                                          # if no f0 return no harmonics
 		return np.zeros(nH), np.zeros(nH), np.zeros(nH)
+	
+	# no peaks above threshold, return no harmonics
+	if len(pfreq) == 0:
+		print "fund freq detected, but no peaks over threshold"
+		return np.zeros(nH), np.zeros(nH), np.zeros(nH)
+	
 	hfreq = np.zeros(nH)                                 # initialize harmonic frequencies
 	hmag = np.zeros(nH)-100                              # initialize harmonic magnitudes
 	hphase = np.zeros(nH)                                # initialize harmonic phases
@@ -198,5 +209,81 @@ def harmonicModelAnal(x, fs, w, N, H, t, nH, minf0, maxf0, f0et, harmDevSlope=0.
 			xhphase = np.vstack((xhphase, np.array([hphase])))
 		pin += H                                              # advance sound pointer
 	xhfreq = SM.cleaningSineTracks(xhfreq, round(fs*minSineDur/H))     # delete tracks shorter than minSineDur
+	return xhfreq, xhmag, xhphase
+
+
+def harmonicModelAnal_2(x, fs, w, N,  hopSizeMelodia, pinFirst, t, nH, f0Series, harmDevSlope=0.01, minSineDur=.02):
+	"""
+	Analysis of a sound using the sinusoidal harmonic model
+	x: input sound; fs: sampling rate, w: analysis window; N: FFT size (minimum 512); t: threshold in negative dB, 
+	nH: maximum number of harmonics;  minf0: minimum f0 frequency in Hz, 
+	maxf0: maximim f0 frequency in Hz; f0et: error threshold in the f0 detection (ex: 5),
+	harmDevSlope: slope of harmonic deviation; minSineDur: minimum length of harmonics
+	returns xhfreq, xhmag, xhphase: harmonic frequencies, magnitudes and phases
+	"""
+
+	if (minSineDur <0):                                     # raise exception if minSineDur is smaller than 0
+		raise ValueError("Minimum duration of sine tracks smaller than 0")
+		
+	hN = N/2                                                # size of positive spectrum
+	hM1 = int(math.floor((w.size+1)/2))                     # half analysis window size by rounding
+	hM2 = int(math.floor(w.size/2))                         # half analysis window size by floor
+	x = np.append(np.zeros(hM2),x)                          # add zeros at beginning to center first window at sample 0
+	x = np.append(x,np.zeros(hM2))                          # add zeros at the end to analyze last sample
+# 	pin = hM1                                               # init sound pointer in middle of anal window          
+	pin = pinFirst
+	pend = x.size - hM1                                     # last sample to start a frame
+	fftbuffer = np.zeros(N)                                 # initialize buffer for FFT
+	w = w / sum(w)                                          # normalize analysis window
+	hfreqp = []                                             # initialize harmonic frequencies of previous frame
+# 	f0t = 0                                                 # initialize f0 track
+# 	f0stable = 0                                            # initialize f0 stable
+	idxF0Series = 0
+	while pin<=pend and idxF0Series < len(f0Series):           
+		
+		logger.debug("at time {}".format(pin/fs))
+		print "at time {}".format(pin/fs)
+
+		x1 = x[pin-hM1:pin+hM2]                               # select frame
+		mX, pX = DFT.dftAnal(x1, w, N)                        # compute dft            
+		ploc = UF.peakDetection(mX, t)                        # detect peak locations   
+
+		if len(ploc) == 0:
+			print "no peaks detected at time {} with threshold {}".format(pin/fs, t)
+			
+
+		iploc, ipmag, ipphase = UF.peakInterp(mX, pX, ploc)   # refine peak values
+		ipfreq = fs * iploc/N                                 # convert locations to Hz
+		
+		#extract fundamental freq
+# 		f0t = UF.f0Twm(ipfreq, ipmag, f0et, minf0, maxf0, f0stable)  # find f0
+# 		
+# 		if ((f0stable==0)&(f0t>0)) \
+# 				or ((f0stable>0)&(np.abs(f0stable-f0t)<f0stable/5.0)):
+# 			f0stable = f0t                                      # consider a stable f0 if it is close to the previous one
+# 		else:
+# 			f0stable = 0
+		f0t = f0Series[idxF0Series]
+		if f0t < 50:
+			f0t = 0
+		
+		# find harmonics
+		
+		hfreq, hmag, hphase = harmonicDetection(ipfreq, ipmag, ipphase, f0t, nH, hfreqp, fs, harmDevSlope)
+		hfreqp = hfreq
+# 		if pin == hM1:                                        # first frame
+		if pin == pinFirst:                                        # first frame
+			xhfreq = np.array([hfreq])
+			xhmag = np.array([hmag])
+			xhphase = np.array([hphase])
+		else:                                                 # next frames
+			xhfreq = np.vstack((xhfreq,np.array([hfreq])))
+			xhmag = np.vstack((xhmag, np.array([hmag])))
+			xhphase = np.vstack((xhphase, np.array([hphase])))
+		# advance sound pointer
+		pin += hopSizeMelodia
+		idxF0Series += 1
+		                                              
+	xhfreq = SM.cleaningSineTracks(xhfreq, round(fs*minSineDur/hopSizeMelodia))     # delete tracks shorter than minSineDur
 	return xhfreq, xhmag, xhphase
 

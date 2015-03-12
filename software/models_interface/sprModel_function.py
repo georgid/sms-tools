@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/sprModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/sprModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ import utilFunctions as UF
 import sprModel as SPR
 import stft as STFT
 
-def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, 
+def extractHarmSpec(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, 
 	minSineDur=0.02, maxnSines=150, freqDevOffset=10, freqDevSlope=0.001):
 	"""
 	inputFile: input sound file (monophonic with sampling rate of 44100)
@@ -98,4 +98,4 @@ def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, 
 	plt.show()
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

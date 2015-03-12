@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/harmonicModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/harmonicModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ import utilFunctions as UF
 import sineModel as SM
 import harmonicModel as HM
 
-def main(inputFile='../../sounds/vignesh.wav', window='blackman', M=1201, N=2048, t=-90, 
+def extractHarmSpec(inputFile='../../sounds/vignesh.wav', window='blackman', M=1201, N=2048, t=-90, 
 	minSineDur=0.1, nH=100, minf0=130, maxf0=300, f0et=7, harmDevSlope=0.01):
 	"""
 	Analysis and synthesis using the harmonic model
@@ -82,4 +82,4 @@ def main(inputFile='../../sounds/vignesh.wav', window='blackman', M=1201, N=2048
 	plt.show()
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()

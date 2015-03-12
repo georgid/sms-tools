@@ -198,7 +198,7 @@ class HprModel_frame:
 			f0et = int(self.f0et.get())
 			harmDevSlope = float(self.harmDevSlope.get())
 
-			hprModel_function.main(inputFile, window, M, N, t, minSineDur, nH, minf0, maxf0, f0et, harmDevSlope)
+			hprModel_function.extractHarmSpec(inputFile, window, M, N, t, minSineDur, nH, minf0, maxf0, f0et, harmDevSlope)
 
 		except ValueError as errorMessage:
 			tkMessageBox.showerror("Input values error", errorMessage)

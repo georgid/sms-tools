@@ -1,4 +1,4 @@
-# function to call the main analysis/synthesis functions in software/models/sineModel.py
+# function to call the extractHarmSpec analysis/synthesis functions in software/models/sineModel.py
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../mo
 import utilFunctions as UF
 import sineModel as SM
 
-def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, minSineDur=0.02, 
+def extractHarmSpec(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, t=-80, minSineDur=0.02, 
 					maxnSines=150, freqDevOffset=10, freqDevSlope=0.001):
 	"""
 	Perform analysis/synthesis using the sinusoidal model
@@ -82,5 +82,5 @@ def main(inputFile='../../sounds/bendir.wav', window='hamming', M=2001, N=2048, 
 
 
 if __name__ == "__main__":
-	main()
+	extractHarmSpec()
 
