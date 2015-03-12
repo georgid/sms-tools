@@ -17,8 +17,10 @@ if pathUtils not in sys.path:
 
 from Utilz import readListOfListTextFile_gen
 
-# inputFile = '/Users/joro/Downloads/dan-erhuang_01_1.wav'
-inputFile = '../sounds/vignesh.wav'
+inputFile = 'example_data/dan-erhuang_01_1.wav'
+melodiaInput = 'example_data/dan-erhuang_01.txt'
+
+# inputFile = '../sounds/vignesh.wav'
 
 # def extractHarmSpec(inputFile='../sounds/vignesh.wav', window='blackman', M=1201, N=2048, t=-90, 
 # 	minSineDur=0.1, nH=100, minf0=130, maxf0=300, f0et=7, harmDevSlope=0.01):
@@ -42,7 +44,7 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 	
 
 # 	readf0 from Melodia 
-	f0FreqsRaw = readListOfListTextFile_gen('/Users/joro/Downloads/dan-erhuang_01.txt')
+	f0FreqsRaw = readListOfListTextFile_gen(melodiaInput)
 	hopSizeMelodia = int( round( (float(f0FreqsRaw[1][0])  - float(f0FreqsRaw[0][0]) ) * fs ) )
 	
 	firstTs = float(f0FreqsRaw[0][0])
@@ -69,7 +71,8 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 	return hfreq, hmag, hphase, fs, hopSizeMelodia
 	
 def resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia):
-	# synthesize the harmonics
+	''' synthesize the harmonics
+	'''
 # 	Ns = 512
 	Ns = 4 * hopSizeMelodia
 
@@ -124,6 +127,7 @@ def visualizeHarmSp(x, y, hopSizeMelodia ):
 	plt.show()
 
 if __name__ == "__main__":
+	# exatract spectrum
 	hfreq, hmag, hphase, fs, hopSizeMelodia = extractHarmSpec()
 	np.savetxt('hfreq_2', hfreq)
 	np.savetxt('hmag_2', hmag)
@@ -133,6 +137,7 @@ if __name__ == "__main__":
 	hmag = np.loadtxt('hmag_2')
 	hphase = np.loadtxt('hphase_2')
 	
+	# resynthesize
 	resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia)
 	
 	
