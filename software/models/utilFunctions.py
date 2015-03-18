@@ -65,7 +65,7 @@ def wavwrite(y, fs, filename):
 
 def peakDetection(mX, t):
 	"""
-	Detect spectral peak locations
+	Detect spectral peak locations by fixed amplitude thresholding
 	mX: magnitude spectrum, t: threshold
 	returns ploc: peak locations
 	"""
@@ -79,7 +79,8 @@ def peakDetection(mX, t):
 
 def peakInterp(mX, pX, ploc):
 	"""
-	Interpolate peak values using parabolic interpolation
+	Interpolate peak positions  using parabolic interpolation
+	and phrases by linear interpolation
 	mX, pX: magnitude and phase spectrum, ploc: locations of peaks
 	returns iploc, ipmag, ipphase: interpolated peak location, magnitude and phase values
 	"""
@@ -103,14 +104,14 @@ def sinc(x, N):
 	y[np.isnan(y)] = N                                 # avoid NaN if x == 0
 	return y
 
-def genBhLobe(x):
+def genBhLobe(x, N):
 	"""
 	Generate the main lobe of a Blackman-Harris window
 	x: bin positions to compute (real values)
+	N: size of fft
 	returns y: main lobe os spectrum of a Blackman-Harris window
 	"""
 
-	N = 512                                                 # size of fft to use
 	f = x*np.pi*2/N                                         # frequency sampling
 	df = 2*np.pi/N
 	y = np.zeros(x.size)                                    # initialize window
@@ -140,17 +141,24 @@ def genSpecSines_p(ipfreq, ipmag, ipphase, N, fs):
 	N: size of the complex spectrum to generate; fs: sampling rate
 	returns Y: generated complex spectrum of sines
 	"""
-
+	# width main lobe in samples. should be odd
+	widthMLobe = 9
+	widthMLobeLeft = (widthMLobe -1) / 2
+	widthMLobeRight= widthMLobeLeft + 1
+# 	TODO: size of main lobe should depend on N
+	
 	Y = np.zeros(N, dtype = complex)                 # initialize output complex spectrum  
 	hN = N/2                                         # size of positive freq. spectrum
 	for i in range(0, ipfreq.size):                  # generate all sine spectral lobes
 		loc = N * ipfreq[i] / fs                       # it should be in range ]0,hN-1[
 		if loc==0 or loc>hN-1: continue
 		binremainder = round(loc)-loc;
-		lb = np.arange(binremainder-4, binremainder+5) # main lobe (real value) bins to read
-		lmag = genBhLobe(lb) * 10**(ipmag[i]/20)       # lobe magnitudes of the complex exponential
-		b = np.arange(round(loc)-4, round(loc)+5)
-		for m in range(0, 9):
+		lb = np.arange(binremainder-widthMLobeLeft, binremainder+widthMLobeRight) # main lobe (real value) bins to read
+# 		lmag = genBhLobe(lb) * 10**(ipmag[i]/20)       # lobe magnitudes of the complex exponential
+		lmag = genBhLobe(lb, N) * ipmag[i]       # lobe magnitudes of the complex exponential 
+
+		b = np.arange(round(loc)-widthMLobeLeft, round(loc)+widthMLobeRight)
+		for m in range(0, widthMLobe):
 			if b[m] < 0:                                 # peak lobe crosses DC bin
 				Y[-b[m]] += lmag[m]*np.exp(-1j*ipphase[i])
 			elif b[m] > hN:                              # peak lobe croses Nyquist bin

@@ -36,7 +36,8 @@ def extractHarmSpec(inputFile='../../sounds/vignesh.wav', window='blackman', M=1
 
 	# detect harmonics of input sound
 	hfreq, hmag, hphase = HM.harmonicModelAnal(x, fs, w, N, H, t, nH, minf0, maxf0, f0et, harmDevSlope, minSineDur)
-
+	
+	
 	# synthesize the harmonics
 	y = SM.sineModelSynth(hfreq, hmag, hphase, Ns, H, fs)  
 

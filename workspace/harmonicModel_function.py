@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
 from scipy.signal import get_window
-from matplotlib.colors import NP_CLIP_OUT
+
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../software/models/'))
 import utilFunctions as UF
 import sineModel as SM
@@ -50,7 +50,7 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 	firstTs = float(f0FreqsRaw[0][0])
 	pinFirst  = round (firstTs * fs)
 	
-	# discard ts
+	# discard ts-s
 	f0Series = []
 	for foFreqRaw in f0FreqsRaw:
 		f0Series.append(float(foFreqRaw[1])) 
@@ -67,6 +67,14 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 
 	# detect harmonics of input sound
 	hfreq, hmag, hphase = HM.harmonicModelAnal_2(x, fs, w, N, hopSizeMelodia, pinFirst, t, nH, f0Series, harmDevSlope, minSineDur)
+
+# w/o melodia and with resynthesis 
+# 	minf0=130
+# 	maxf0=300
+# 	f0et=7
+# 	HM.harmonicModel(x, fs, w, N, t, nH, minf0, maxf0, f0et)
+
+
 	
 	return hfreq, hmag, hphase, fs, hopSizeMelodia
 	
@@ -88,7 +96,7 @@ def resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia):
 	
 	
 # 	##########################
-# 	## plotting
+# 	## plotting of harmonic spectrum
 # 	
 def visualizeHarmSp(x, y, hopSizeMelodia ):
 	# create figure to show plots
@@ -140,4 +148,5 @@ if __name__ == "__main__":
 	# resynthesize
 	resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia)
 	
+	visualizeHarmSp(x, y, hopSizeMelodia )
 	
