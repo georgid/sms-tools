@@ -120,7 +120,7 @@ def visualizeHarmSp(x, y, hopSizeMelodia ):
 	plt.figure(figsize=(12, 9))
  
 	# frequency range to plot
-	maxplotfreq = 5000.0
+	maxplotfreq = 10000.0
  
 	# plot the input sound
 	plt.subplot(3,1,1)
@@ -156,15 +156,15 @@ if __name__ == "__main__":
 # 	inputFile = 'example_data/dan-erhuang_01_1.wav'
 # 	melodiaInput = 'example_data/dan-erhuang_01.txt'
 
-	inputFile = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04_01.wav'
+	inputFile = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.wav'
 	melodiaInput = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.melodia.txt'
 	fromTs = 49.85
 	toTs = 55.00
 		
-	inputFile = '../sounds/vignesh.wav'
-	melodiaInput = '../sounds/vignesh.melodia'
-	fromTs =0
-	toTs = 2
+# 	inputFile = '../sounds/vignesh.wav'
+# 	melodiaInput = '../sounds/vignesh.melodia'
+# 	fromTs = 0
+# 	toTs = 2
 	
 
 	# exatract spectrum
