@@ -170,6 +170,51 @@ def genSpecSines_p(ipfreq, ipmag, ipphase, N, fs):
 		Y[hN+1:] = Y[hN-1:0:-1].conjugate()            # fill the negative part of the spectrum
 	return Y
 
+def genSpecSines_p_onePeak(ipfreq, ipmag, ipphase, N, fs):
+	"""
+	Generate a spectrum from one sine using mainLobe blackman-harris 
+	iploc, ipmag, ipphase: sine peaks location, magnitude and phase
+	
+	N: size of the complex spectrum to generate; fs: sampling rate
+	
+	returns Y: generated complex spectrum of sine
+	b: indices of relevant spectral compoments
+	"""
+	# width main lobe in samples. should be odd
+	widthMLobe = 9
+	widthMLobeLeft = (widthMLobe -1) / 2
+	widthMLobeRight= widthMLobeLeft + 1
+# 	TODO: size of main lobe should depend on N
+	
+	Y = np.zeros(N, dtype = complex)                 # initialize output complex spectrum  
+	hN = N/2                                         # size of positive freq. spectrum
+	
+	loc = N * ipfreq / fs                       # it should be in range ]0,hN-1[
+	if loc==0 or loc>hN-1: 
+		print "peak center is at bin 0 or over Nyquist freq! "
+		return Y, None
+	
+	binremainder = round(loc)-loc;
+	lb = np.arange(binremainder-widthMLobeLeft, binremainder+widthMLobeRight) # main lobe (real value) bins to read
+# 		lmag = genBhLobe(lb) * 10**(ipmag[i]/20)       # lobe magnitudes of the complex exponential
+	lmag = genBhLobe(lb, N) * ipmag       # lobe magnitudes of the complex exponential 
+
+	b = np.arange(round(loc)-widthMLobeLeft, round(loc)+widthMLobeRight)
+	for m in range(0, widthMLobe):
+		if b[m] < 0:                                 # peak lobe crosses DC bin
+			Y[-b[m]] += lmag[m]*np.exp(-1j*ipphase)
+		elif b[m] > hN:                              # peak lobe croses Nyquist bin
+			Y[b[m]] += lmag[m]*np.exp(-1j*ipphase)
+		elif b[m] == 0 or b[m] == hN:                # peak lobe in the limits of the spectrum 
+			Y[b[m]] += lmag[m]*np.exp(1j*ipphase) + lmag[m]*np.exp(-1j*ipphase)
+		else:                                        # peak lobe in positive freq. range
+			Y[b[m]] += lmag[m]*np.exp(1j*ipphase)
+	Y[hN+1:] = Y[hN-1:0:-1].conjugate()            # fill the negative part of the spectrum
+	
+	return Y, b
+
+
+
 def sinewaveSynth(freqs, amp, H, fs):
 	"""
 	Synthesis of one sinusoid with time-varying frequency

@@ -10,15 +10,15 @@ import utilFunctions as UF
 import sineModel as SM
 import harmonicModel as HM
 
-parentParentDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(sys.argv[0]) ), os.path.pardir,  os.path.pardir)) 
+parentParentDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__) ), os.path.pardir,  os.path.pardir)) 
 pathUtils = os.path.join(parentParentDir, 'utilsLyrics')
 if pathUtils not in sys.path:
 	sys.path.append(pathUtils )
 
 from Utilz import readListOfListTextFile_gen
 
-inputFile = 'example_data/dan-erhuang_01_1.wav'
-melodiaInput = 'example_data/dan-erhuang_01.txt'
+
+
 
 # inputFile = '../sounds/vignesh.wav'
 
@@ -26,7 +26,7 @@ melodiaInput = 'example_data/dan-erhuang_01.txt'
 # 	minSineDur=0.1, nH=100, minf0=130, maxf0=300, f0et=7, harmDevSlope=0.01):
 
 # increasing the threshold means discarding more  peaks and selecting less 	
-def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70, 
+def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, window='blackman', M=2047, N=2048, t=-70, 
 	minSineDur=0.0, nH=30, harmDevSlope=0.02):
 	"""
 	Analysis and synthesis using the harmonic model
@@ -47,13 +47,29 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 	f0FreqsRaw = readListOfListTextFile_gen(melodiaInput)
 	hopSizeMelodia = int( round( (float(f0FreqsRaw[1][0])  - float(f0FreqsRaw[0][0]) ) * fs ) )
 	
-	firstTs = float(f0FreqsRaw[0][0])
+	### get indices in melodia
+	fromTs = float(fromTs)
+	toTs = float(toTs)
+	
+	idx = 0
+	while fromTs > float(f0FreqsRaw[idx][0]):
+		idx += 1
+	
+	firstTs = float(f0FreqsRaw[idx][0])
 	pinFirst  = round (firstTs * fs)
+		
+	f0Series = []
+	while  float(f0FreqsRaw[idx][0]) <= toTs:
+		f0Series.append(float(f0FreqsRaw[idx][1])) 
+		idx += 1
+	lastTs = float(f0FreqsRaw[idx-1][0])
+	pinLast = round (lastTs * fs)
+	
+
 	
 	# discard ts-s
-	f0Series = []
-	for foFreqRaw in f0FreqsRaw:
-		f0Series.append(float(foFreqRaw[1])) 
+# 	for foFreqRaw in range() f0FreqsRaw:
+# 		f0Series.append(float(foFreqRaw[1])) 
 	
 	# size of fft used in synthesis
 
@@ -66,7 +82,7 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 	w = get_window(window, M)
 
 	# detect harmonics of input sound
-	hfreq, hmag, hphase = HM.harmonicModelAnal_2(x, fs, w, N, hopSizeMelodia, pinFirst, t, nH, f0Series, harmDevSlope, minSineDur)
+	hfreq, hmag, hphase = HM.harmonicModelAnal_2(x, fs, w, N, hopSizeMelodia, pinFirst, pinLast, t, nH, f0Series, harmDevSlope, minSineDur)
 
 # w/o melodia and with resynthesis 
 # 	minf0=130
@@ -76,9 +92,9 @@ def extractHarmSpec( window='blackman', M=2047, N=2048, t=-70,
 
 
 	
-	return hfreq, hmag, hphase, fs, hopSizeMelodia
+	return hfreq, hmag, hphase, fs, hopSizeMelodia, x[pinFirst:pinLast]
 	
-def resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia):
+def resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia, URIOutputFile):
 	''' synthesize the harmonics
 	'''
 # 	Ns = 512
@@ -87,12 +103,13 @@ def resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia):
 	y = SM.sineModelSynth(hfreq, hmag, hphase, Ns, hopSizeMelodia, fs)  
 
 	# output sound file (monophonic with sampling rate of 44100)
-	outputFile = 'output_sounds/' + os.path.basename(inputFile)[:-4] + '_harmonicModel.wav'
-
+# 	URIOutputFile = 'output_sounds/' + os.path.basename(inputFile)[:-4] + '_harmonicModel.wav'
+	
+	
 	# write the sound resulting from harmonic analysis
-	UF.wavwrite(y, fs, outputFile)
+	UF.wavwrite(y, fs, URIOutputFile)
 	
-	
+	return y
 	
 	
 # 	##########################
@@ -135,8 +152,23 @@ def visualizeHarmSp(x, y, hopSizeMelodia ):
 	plt.show()
 
 if __name__ == "__main__":
+	
+# 	inputFile = 'example_data/dan-erhuang_01_1.wav'
+# 	melodiaInput = 'example_data/dan-erhuang_01.txt'
+
+	inputFile = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04_01.wav'
+	melodiaInput = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.melodia.txt'
+	fromTs = 49.85
+	toTs = 55.00
+		
+	inputFile = '../sounds/vignesh.wav'
+	melodiaInput = '../sounds/vignesh.melodia'
+	fromTs =0
+	toTs = 2
+	
+
 	# exatract spectrum
-	hfreq, hmag, hphase, fs, hopSizeMelodia = extractHarmSpec()
+	hfreq, hmag, hphase, fs, hopSizeMelodia, inputAudio = extractHarmSpec(inputFile, melodiaInput, fromTs, toTs)
 	np.savetxt('hfreq_2', hfreq)
 	np.savetxt('hmag_2', hmag)
 	np.savetxt('hphase_2', hphase)
@@ -146,7 +178,8 @@ if __name__ == "__main__":
 	hphase = np.loadtxt('hphase_2')
 	
 	# resynthesize
-	resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia)
+	URIOutputFile = 'output_sounds/' + os.path.basename(inputFile)[:-4] + '_harmonicModel.wav'
+	y = resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia, URIOutputFile)
 	
-	visualizeHarmSp(x, y, hopSizeMelodia )
+	visualizeHarmSp(inputAudio, y, hopSizeMelodia )
 	

@@ -45,7 +45,7 @@ def extractHarmSpec(inputFile='../../sounds/vignesh.wav', window='blackman', M=1
 	outputFile = 'output_sounds/' + os.path.basename(inputFile)[:-4] + '_harmonicModel.wav'
 
 	# write the sound resulting from harmonic analysis
-	UF.wavwrite(y, fs, outputFile)
+	UF.wavwrite(x, fs, outputFile)
 
 	# create figure to show plots
 	plt.figure(figsize=(12, 9))
