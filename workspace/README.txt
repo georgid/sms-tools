@@ -17,7 +17,8 @@ software.models.harmonicModel.harmonicDetection()
  -------------------------------------------------------
  mainLobeMatcher
  
-  implements a technique of compariong shape of peaks to mainLobe of blackman-harris window
+  implements a technique of compariong shape of peaks to mainLobe of a window:
+  	NOTE: works only with blackman-harris window; size of window hardcoded
  
  see V. Rao and P. Rao - Vocal melody extraction in the presence of pitched accompaniment in polyphonic music, II.B
  

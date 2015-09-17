@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os, sys
 from scipy.signal import get_window
+import logging
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../software/models/'))
 import utilFunctions as UF
@@ -18,15 +19,13 @@ if pathUtils not in sys.path:
 from Utilz import readListOfListTextFile_gen
 
 
-
-
 # inputFile = '../sounds/vignesh.wav'
 
 # def extractHarmSpec(inputFile='../sounds/vignesh.wav', window='blackman', M=1201, N=2048, t=-90, 
 # 	minSineDur=0.1, nH=100, minf0=130, maxf0=300, f0et=7, harmDevSlope=0.01):
 
 # increasing the threshold means discarding more  peaks and selecting less 	
-def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, window='blackman', M=2047, N=2048, t=-70, 
+def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, t=-70, window='blackman',  M=2047, N=2048 , 
 	minSineDur=0.0, nH=30, harmDevSlope=0.02):
 	"""
 	Analysis and synthesis using the harmonic model
@@ -50,6 +49,10 @@ def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, window='blackman', M
 	### get indices in melodia
 	fromTs = float(fromTs)
 	toTs = float(toTs)
+ 	if fromTs==-1 and toTs==-1:
+ 		logging.debug("fromTs and toTs not defined. extracting whole recording")
+ 		fromTs=0; toTs=f0FreqsRaw[-1][0]
+    		
 	
 	idx = 0
 	while fromTs > float(f0FreqsRaw[idx][0]):
@@ -59,7 +62,7 @@ def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, window='blackman', M
 	pinFirst  = round (firstTs * fs)
 		
 	f0Series = []
-	while  float(f0FreqsRaw[idx][0]) <= toTs:
+	while  idx < len(f0FreqsRaw) and float(f0FreqsRaw[idx][0]) <= toTs:
 		f0Series.append(float(f0FreqsRaw[idx][1])) 
 		idx += 1
 	lastTs = float(f0FreqsRaw[idx-1][0])
@@ -157,9 +160,12 @@ if __name__ == "__main__":
 # 	melodiaInput = 'example_data/dan-erhuang_01.txt'
 
 	inputFile = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.wav'
-	melodiaInput = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.melodia.txt'
+	melodiaInput = '/Users/joro/Documents/Phd/UPF/arias/laosheng-erhuang_04.melodia'
 	fromTs = 49.85
 	toTs = 55.00
+	
+	fromTs = 0
+	toTs = 858
 		
 # 	inputFile = '../sounds/vignesh.wav'
 # 	melodiaInput = '../sounds/vignesh.melodia'
@@ -168,7 +174,7 @@ if __name__ == "__main__":
 	
 
 	# exatract spectrum
-	hfreq, hmag, hphase, fs, hopSizeMelodia, inputAudio = extractHarmSpec(inputFile, melodiaInput, fromTs, toTs)
+	hfreq, hmag, hphase, fs, hopSizeMelodia, inputAudioFromTsToTs = extractHarmSpec(inputFile, melodiaInput, fromTs, toTs)
 	np.savetxt('hfreq_2', hfreq)
 	np.savetxt('hmag_2', hmag)
 	np.savetxt('hphase_2', hphase)
@@ -181,5 +187,5 @@ if __name__ == "__main__":
 	URIOutputFile = 'output_sounds/' + os.path.basename(inputFile)[:-4] + '_harmonicModel.wav'
 	y = resynthesize(hfreq, hmag, hphase, fs, hopSizeMelodia, URIOutputFile)
 	
-	visualizeHarmSp(inputAudio, y, hopSizeMelodia )
+	visualizeHarmSp(inputAudioFromTsToTs, y, hopSizeMelodia )
 	

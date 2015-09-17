@@ -12,7 +12,7 @@ import sys
 import logging
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 def f0Detection(x, fs, w, N, H, t, minf0, maxf0, f0et):
 	"""
@@ -242,7 +242,6 @@ def harmonicModelAnal_2(x, fs, w, N,  hopSizeMelodia, pinFirst, pend,  t, nH, f0
 	while pin<=pend and idxF0Series < len(f0Series):           
 		
 		logger.debug("at time {}".format(pin/fs))
-		print "at time {}".format(pin/fs)
 
 		x1 = x[pin-hM1:pin+hM2]                               # select frame
 		mX, pX = DFT.dftAnal(x1, w, N)                        # compute dft            
