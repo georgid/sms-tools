@@ -11,12 +11,9 @@ import utilFunctions as UF
 import sineModel as SM
 import harmonicModel as HM
 
-parentParentDir = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__) ), os.path.pardir,  os.path.pardir)) 
-pathUtils = os.path.join(parentParentDir, 'utilsLyrics')
-if pathUtils not in sys.path:
-	sys.path.append(pathUtils )
-
-from Utilz import readListOfListTextFile_gen
+# import software.models.utilFunctions as UF
+# import software.models.sineModel as SM
+# import software.models.harmonicModel as HM
 
 
 # inputFile = '../sounds/vignesh.wav'
@@ -25,7 +22,7 @@ from Utilz import readListOfListTextFile_gen
 # 	minSineDur=0.1, nH=100, minf0=130, maxf0=300, f0et=7, harmDevSlope=0.01):
 
 # increasing the threshold means discarding more  peaks and selecting less 	
-def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, t=-70, window='blackman',  M=2047, N=2048 , 
+def extractHarmSpec( inputFile, f0FreqsRaw, fromTs, toTs, t=-70, window='blackman',  M=2047, N=2048 , 
 	minSineDur=0.0, nH=30, harmDevSlope=0.02):
 	"""
 	Analysis and synthesis using the harmonic model
@@ -42,12 +39,10 @@ def extractHarmSpec( inputFile, melodiaInput, fromTs, toTs, t=-70, window='black
 	(fs, x) = UF.wavread(inputFile)
 	
 
-# 	readf0 from Melodia 
-	f0FreqsRaw = readListOfListTextFile_gen(melodiaInput)
+# 	hopsize
 	hopSizeMelodia = int( round( (float(f0FreqsRaw[1][0])  - float(f0FreqsRaw[0][0]) ) * fs ) )
-	
+
 	### get indices in melodia
-	fromTs = float(fromTs)
 	toTs = float(toTs)
  	if fromTs==-1 and toTs==-1:
  		logging.debug("fromTs and toTs not defined. extracting whole recording")
